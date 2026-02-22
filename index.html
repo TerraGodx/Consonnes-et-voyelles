@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Articulation — Consonnes & Voyelles</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #09090b;
+    --surface: #111115;
+    --surface2: #18181e;
+    --border: #222228;
+    --text: #f4f4f8;
+    --text2: #b0b4c8;
+    --muted: #6a6e88;
+    --accent: #e8ff47;
+    --accent2: #ff6b47;
+    --accent3: #47c8ff;
+    --green: #47ffaa;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  /* Grain texture */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 100;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  /* ── HEADER ── */
+  .header {
+    width: 100%;
+    max-width: 900px;
+    padding: 28px 24px 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .title-block h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    letter-spacing: 0.04em;
+    line-height: 0.9;
+    color: var(--text);
+  }
+
+  .title-block h1 span { color: var(--accent); }
+
+  .title-block p {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    text-align: center;
+  }
+
+  .stat-pill .val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .stat-pill .lbl {
+    font-size: 0.55rem;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* ── CONSEIL BOX ── */
+  .conseil-box {
+    width: 100%;
+    max-width: 900px;
+    margin: 20px 24px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    font-size: 0.75rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+
+  .conseil-box strong { color: var(--accent); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ── TABS ── */
+  .tabs {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    gap: 0;
+    padding: 24px 24px 0;
+    border-bottom: 1px solid var(--border);
+    margin-top: 8px;
+  }
+
+  .tab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 18px;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: none;
+    border-top: none; border-left: none; border-right: none;
+    white-space: nowrap;
+  }
+
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    width: 100%;
+    max-width: 900px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ── CONSONANT SELECTOR ── */
+  .consonant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    gap: 8px;
+  }
+
+  .cons-btn {
+    aspect-ratio: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .cons-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.05); }
+  .cons-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .cons-btn.done::after {
+    content: '✓';
+    position: absolute;
+    top: 2px; right: 4px;
+    font-family: sans-serif;
+    font-size: 0.55rem;
+    color: var(--green);
+  }
+
+  /* ── EXERCISE DISPLAY ── */
+  .exercise-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .ex-panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .ex-panel-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.06em;
+    color: var(--text);
+  }
+
+  .ex-panel-title span { color: var(--accent); }
+
+  .ex-panel-sub {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── SYLLABLE DISPLAY ── */
+  .syllable-display {
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  /* Current syllable BIG */
+  .current-syll {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 18vw, 10rem);
+    letter-spacing: 0.08em;
+    line-height: 1;
+    color: var(--accent);
+    text-shadow: 0 0 60px rgba(232,255,71,0.3);
+    transition: color 0.15s, transform 0.1s;
+    text-align: center;
+  }
+
+  .current-syll.pulse {
+    animation: syllPulse 0.12s ease-out;
+  }
+
+  @keyframes syllPulse {
+    0%  { transform: scale(1.12); }
+    100%{ transform: scale(1); }
+  }
+
+  /* Bounce balls visual */
+  .bounce-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    height: 48px;
+  }
+
+  .bounce-ball {
+    width: 14px;
+    background: var(--border);
+    border-radius: 100px;
+    transition: background 0.08s, height 0.08s;
+    height: 14px;
+  }
+
+  .bounce-ball.lit {
+    background: var(--accent);
+    height: 40px;
+    box-shadow: 0 0 12px rgba(232,255,71,0.6);
+  }
+
+  /* All syllables of group */
+  .syll-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .syll-chip {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.06em;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    transition: all 0.1s;
+  }
+
+  .syll-chip.active {
+    background: rgba(232,255,71,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: scale(1.1);
+  }
+
+  .syll-chip.done {
+    color: var(--muted);
+    background: var(--surface);
+    opacity: 0.5;
+  }
+
+  /* ── METRONOME ── */
+  .metro-bar {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: var(--surface2);
+  }
+
+  .metro-bpm-display {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--accent);
+    line-height: 1;
+    min-width: 70px;
+  }
+
+  .metro-bpm-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .metro-slider-wrap {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  input[type=range].metro-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range].metro-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(232,255,71,0.5);
+  }
+
+  .metro-presets {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .preset-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+
+  .preset-btn:hover, .preset-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(232,255,71,0.06);
+  }
+
+  /* ── CONTROLS ── */
+  .controls-bar {
+    display: flex;
+    gap: 10px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .play-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    padding: 12px 28px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: var(--bg);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .play-btn:hover { filter: brightness(1.15); box-shadow: 0 0 24px rgba(232,255,71,0.35); }
+  .play-btn.running { background: var(--accent2); box-shadow: 0 0 20px rgba(255,107,71,0.3); }
+
+  .nav-btn {
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .nav-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  .done-btn {
+    padding: 12px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--green);
+    background: rgba(71,255,170,0.07);
+    color: var(--green);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-left: auto;
+  }
+
+  .done-btn:hover { background: rgba(71,255,170,0.15); }
+
+  /* Repeat counter */
+  .repeat-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+  }
+
+  .repeat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .repeat-dots {
+    display: flex; gap: 5px;
+  }
+
+  .rep-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .rep-dot.done { background: var(--accent); transform: scale(1.3); }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--accent3), var(--accent));
+    transition: width 0.4s;
+  }
+
+  /* ── PENCIL TIP ── */
+  .pencil-tip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: rgba(255,107,71,0.07);
+    border: 1px solid rgba(255,107,71,0.2);
+    border-radius: 10px;
+    font-size: 0.72rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .pencil-tip .pencil-icon { font-size: 1.5rem; flex-shrink: 0; }
+
+  /* ── MODE PANEL ── */
+  .mode-panel {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mode-panel.active { display: flex; }
+
+  /* All syllables table */
+  .syll-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .syll-table-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .syll-table-grid {
+    padding: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .syll-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.06em;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .syll-item:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* XP popup */
+  .xp-popup {
+    position: fixed;
+    top: 80px; right: 24px;
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    border-radius: 100px;
+    padding: 8px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    z-index: 999;
+    pointer-events: none;
+    animation: popAnim 1.8s ease-out forwards;
+  }
+
+  @keyframes popAnim {
+    0%  { opacity: 0; transform: translateY(8px); }
+    20% { opacity: 1; transform: translateY(0); }
+    75% { opacity: 1; }
+    100%{ opacity: 0; transform: translateY(-16px); }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  @media (max-width: 600px) {
+    .current-syll { font-size: 5rem; }
+    .main { padding: 16px; }
+    .header { padding: 20px 16px 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="title-block">
+    <h1>Consonnes<br><span>&amp; Voyelles</span></h1>
+    <p>Exercices d'articulation rythmée · Anti-mollesse</p>
+  </div>
+  <div class="header-stats">
+    <div class="stat-pill">
+      <div class="val" id="statDone">0</div>
+      <div class="lbl">Complétés</div>
+    </div>
+    <div class="stat-pill">
+      <div class="val" id="statXP">0</div>
+      <div class="lbl">XP</div>
+    </div>
+    <div class="stat-pill">
+      <div class="val" id="statTime">0:00</div>
+      <div class="lbl">Durée</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONSEIL -->
+<div class="conseil-box" style="width:calc(100% - 48px); margin: 16px 24px 0;">
+  <strong>📋 Méthode :</strong> Inspirez profondément avant chaque ligne. Attaquez la 1ère syllabe et laissez les suivantes <em>rebondir</em> comme une balle (BABABABABA). Exagérez la consonne. Passez plus de temps sur les groupes difficiles.
+</div>
+
+<!-- TABS -->
+<div class="tabs" style="width:calc(100% - 0px); max-width:900px; padding: 16px 24px 0;">
+  <button class="tab active" data-tab="exercice">🎯 Exercice guidé</button>
+  <button class="tab" data-tab="simples">📋 Syllabes simples</button>
+  <button class="tab" data-tab="nasales">👃 Syllabes nasales</button>
+  <button class="tab" data-tab="varietes">🔀 Variétés</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ═══ MODE EXERCICE GUIDÉ ═══ -->
+  <div class="mode-panel active" id="panel-exercice">
+
+    <!-- Pencil tip -->
+    <div class="pencil-tip">
+      <span class="pencil-icon">✏️</span>
+      <span>Pour augmenter la difficulté : placez un <strong>crayon en bois</strong> dans votre bouche pendant les exercices, comme indiqué dans le document original.</span>
+    </div>
+
+    <!-- Consonant selector -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:var(--muted); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:12px;">
+        Choisir une consonne
+      </div>
+      <div class="consonant-grid" id="consonantGrid"></div>
+    </div>
+
+    <!-- Exercise panel -->
+    <div class="exercise-panel">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+      <div class="ex-panel-header">
+        <div>
+          <div class="ex-panel-title" id="exTitle">Consonne <span id="exCons">B</span></div>
+          <div class="ex-panel-sub" id="exSub">Syllabes simples · Groupe 1/5</div>
+        </div>
+        <div class="repeat-wrap">
+          <span class="repeat-label">Répétitions</span>
+          <div class="repeat-dots" id="repeatDots"></div>
+        </div>
+      </div>
+
+      <!-- Syllable display -->
+      <div class="syllable-display">
+        <div class="current-syll" id="currentSyll">BA</div>
+        <div class="bounce-row" id="bounceRow"></div>
+        <div class="syll-group" id="syllGroup"></div>
+      </div>
+
+      <!-- Metronome -->
+      <div class="metro-bar">
+        <div>
+          <div class="metro-bpm-display" id="metroBpmDisplay">60</div>
+          <div class="metro-bpm-label">BPM</div>
+        </div>
+        <div class="metro-slider-wrap">
+          <input type="range" class="metro-slider" id="metroSlider" min="30" max="160" value="60">
+        </div>
+        <div class="metro-presets">
+          <button class="preset-btn" data-bpm="40">40 · Débutant</button>
+          <button class="preset-btn active" data-bpm="60">60 · Lent</button>
+          <button class="preset-btn" data-bpm="80">80 · Moyen</button>
+          <button class="preset-btn" data-bpm="100">100 · Rapide</button>
+          <button class="preset-btn" data-bpm="120">120 · Expert</button>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-bar">
+        <button class="play-btn" id="playBtn">▶ Démarrer</button>
+        <button class="nav-btn" id="prevGroup">◀ Précédent</button>
+        <button class="nav-btn" id="nextGroup">Suivant ▶</button>
+        <button class="done-btn" id="doneBtn">✓ Consonne maîtrisée</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODE SYLLABES SIMPLES ═══ -->
+  <div class="mode-panel" id="panel-simples">
+    <div class="syll-table">
+      <div class="syll-table-header">
+        <span>Toutes les syllabes simples (Consonne + A/E/I/O/U)</span>
+        <span id="simplesCount" style="color:var(--accent)"></span>
+      </div>
+      <div class="syll-table-grid" id="simplesGrid"></div>
+    </div>
+  </div>
+
+  <!-- ═══ MODE NASALES ═══ -->
+  <div class="mode-panel" id="panel-nasales">
+    <div class="syll-table">
+      <div class="syll-table-header">
+        <span>Syllabes nasales (Consonne + AN/EN/IN/ON/UN)</span>
+        <span id="nasalesCount" style="color:var(--accent3)"></span>
+      </div>
+      <div class="syll-table-grid" id="nasalesGrid"></div>
+    </div>
+  </div>
+
+  <!-- ═══ MODE VARIÉTÉS ═══ -->
+  <div class="mode-panel" id="panel-varietes">
+    <div class="syll-table">
+      <div class="syll-table-header">
+        <span>Variétés — Consonnes finales mixtes</span>
+        <span id="varietesCount" style="color:var(--accent2)"></span>
+      </div>
+      <div class="syll-table-grid" id="varietesGrid"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── DATA from PDF ──
+const CONSONANTS = ['B','C','D','F','G','J','L','M','N','P','R','S','T','V','X','Z'];
+const VOWELS = ['A','E','I','O','U'];
+const NASAL = ['AN','EN','IN','ON','UN'];
+
+// Variétés from PDF (consonne + ending)
+const VARIETIES = [
+  { cons:'B', ends:['AM','EM','IM','OM','UM'] },
+  { cons:'C', ends:['AP','EP','IP','OP','UP'] },
+  { cons:'D', ends:['AG','EG','IG','OG','UG'] },
+  { cons:'F', ends:['AX','EX','IX','OX','UX'] },
+  { cons:'G', ends:['AJ','EJ','IJ','OJ','UJ'] },
+  { cons:'J', ends:['AR','ER','IR','OR','UR'] },
+  { cons:'L', ends:['AN','EN','IN','OR','UR'] },
+  { cons:'M', ends:['AS','ES','IS','OR','UR'] },
+  { cons:'N', ends:['AZ','EZ','IZ','OR','UR'] },
+  { cons:'P', ends:['AC','EC','IC','OC','UC'] },
+  { cons:'R', ends:['AT','ET','IT','OT','UT'] },
+  { cons:'S', ends:['AR','ER','IR','OR','UR'] },
+  { cons:'V', ends:['AX','EX','IX','OX','UX'] },
+  { cons:'X', ends:['AZ','EZ','IZ','OZ','UZ'] },
+  { cons:'Z', ends:['AF','EF','IF','OF','UF'] },
+];
+
+// Build syllable groups for a consonant (5 vowels × 5 repeats each)
+function buildGroups(cons, type) {
+  if (type === 'simple') {
+    return VOWELS.map(v => ({
+      label: cons + v,
+      syllables: Array(5).fill(cons + v)
+    }));
+  } else if (type === 'nasal') {
+    return NASAL.map(n => ({
+      label: cons + n,
+      syllables: Array(5).fill(cons + n)
+    }));
+  }
+  return [];
+}
+
+// ── STATE ──
+let currentCons = 'B';
+let currentType = 'simple'; // simple | nasal
+let currentGroupIdx = 0;
+let currentSyllIdx = 0;
+let repeatsDone = 0;
+const REPEATS = 3;
+let isRunning = false;
+let metroInterval = null;
+let bpm = 60;
+let doneCons = new Set();
+let totalXP = 0;
+let sessionDone = 0;
+let sessionStart = Date.now();
+let timerInterval = null;
+let audioCtx = null;
+
+function getACtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playClick(strong) {
+  try {
+    const ctx = getACtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.frequency.value = strong ? 1100 : 750;
+    osc.type = 'square';
+    gain.gain.setValueAtTime(strong ? 0.5 : 0.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + 0.07);
+  } catch(e) {}
+}
+
+function playSuccess() {
+  try {
+    const ctx = getACtx();
+    [523, 659, 784].forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.frequency.value = f;
+      const t = ctx.currentTime + i * 0.14;
+      g.gain.setValueAtTime(0.15, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+      osc.connect(g); g.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.3);
+    });
+  } catch(e) {}
+}
+
+// ── RENDER CONSONANT GRID ──
+function renderConsonantGrid() {
+  const grid = document.getElementById('consonantGrid');
+  grid.innerHTML = CONSONANTS.map(c =>
+    `<button class="cons-btn ${c === currentCons ? 'active' : ''} ${doneCons.has(c) ? 'done' : ''}" data-c="${c}">${c}</button>`
+  ).join('');
+  grid.querySelectorAll('.cons-btn').forEach(btn => {
+    btn.addEventListener('click', () => selectCons(btn.dataset.c));
+  });
+}
+
+function selectCons(c) {
+  if (isRunning) stopMetro();
+  currentCons = c;
+  currentGroupIdx = 0;
+  currentSyllIdx = 0;
+  repeatsDone = 0;
+  if (!['nasal'].includes(currentType)) currentType = 'simple';
+  renderConsonantGrid();
+  renderExercise();
+}
+
+// ── RENDER EXERCISE ──
+function getGroups() {
+  return buildGroups(currentCons, currentType);
+}
+
+function renderExercise() {
+  const groups = getGroups();
+  const group = groups[currentGroupIdx];
+  const syll = group.syllables[currentSyllIdx];
+
+  document.getElementById('exTitle').innerHTML = `Consonne <span style="color:var(--accent)">${currentCons}</span>`;
+  document.getElementById('exSub').textContent =
+    `${currentType === 'simple' ? 'Syllabes simples' : 'Syllabes nasales'} · Groupe ${currentGroupIdx + 1}/${groups.length}`;
+
+  // Current syllable
+  document.getElementById('currentSyll').textContent = syll;
+
+  // Bounce row (5 balls)
+  const br = document.getElementById('bounceRow');
+  br.innerHTML = group.syllables.map((s, i) =>
+    `<div class="bounce-ball ${i === currentSyllIdx ? 'lit' : ''}" id="ball-${i}"></div>`
+  ).join('');
+
+  // Syllable chips
+  const sg = document.getElementById('syllGroup');
+  sg.innerHTML = group.syllables.map((s, i) =>
+    `<div class="syll-chip ${i < currentSyllIdx ? 'done' : i === currentSyllIdx ? 'active' : ''}">${s}</div>`
+  ).join('');
+
+  // Repeat dots
+  const rd = document.getElementById('repeatDots');
+  rd.innerHTML = Array.from({length: REPEATS}, (_, i) =>
+    `<div class="rep-dot ${i < repeatsDone ? 'done' : ''}"></div>`
+  ).join('');
+
+  // Progress
+  const total = groups.length * REPEATS;
+  const done = currentGroupIdx * REPEATS + repeatsDone;
+  document.getElementById('progressFill').style.width = `${(done/total)*100}%`;
+}
+
+// ── METRO ──
+function startMetro() {
+  isRunning = true;
+  currentSyllIdx = 0;
+  const playBtn = document.getElementById('playBtn');
+  playBtn.textContent = '⏹ Arrêter';
+  playBtn.classList.add('running');
+
+  const ms = (60 / bpm) * 1000;
+  tick();
+  metroInterval = setInterval(tick, ms);
+}
+
+function tick() {
+  const groups = getGroups();
+  const group = groups[currentGroupIdx];
+  const isFirst = (currentSyllIdx % group.syllables.length === 0);
+
+  playClick(isFirst);
+
+  // Update current syllable display
+  const syll = group.syllables[currentSyllIdx % group.syllables.length];
+  const syllEl = document.getElementById('currentSyll');
+  syllEl.textContent = syll;
+  syllEl.classList.remove('pulse');
+  void syllEl.offsetWidth;
+  syllEl.classList.add('pulse');
+
+  // Bounce balls
+  const idx = currentSyllIdx % group.syllables.length;
+  document.querySelectorAll('.bounce-ball').forEach((b, i) => b.classList.toggle('lit', i === idx));
+  document.querySelectorAll('.syll-chip').forEach((c, i) => {
+    c.classList.toggle('active', i === idx);
+    c.classList.toggle('done', i < idx);
+  });
+
+  currentSyllIdx++;
+
+  // After full group
+  if (currentSyllIdx >= group.syllables.length) {
+    currentSyllIdx = 0;
+    repeatsDone++;
+    renderRepeatDots();
+
+    if (repeatsDone >= REPEATS) {
+      // Move to next group automatically
+      stopMetro();
+      repeatsDone = 0;
+      sessionDone++;
+      totalXP += 10;
+      updateStats();
+      showXpPopup('+10 XP');
+      playSuccess();
+
+      setTimeout(() => {
+        if (currentGroupIdx < groups.length - 1) {
+          currentGroupIdx++;
+          renderExercise();
+        } else {
+          // All groups done for this consonant
+          doneCons.add(currentCons);
+          renderConsonantGrid();
+          document.getElementById('currentSyll').textContent = '✓';
+          document.getElementById('exSub').textContent = 'Consonne complète !';
+          totalXP += 30;
+          showXpPopup('+30 XP · Consonne maîtrisée !');
+          updateStats();
+        }
+      }, 600);
+    }
+  }
+}
+
+function renderRepeatDots() {
+  const rd = document.getElementById('repeatDots');
+  rd.innerHTML = Array.from({length: REPEATS}, (_, i) =>
+    `<div class="rep-dot ${i < repeatsDone ? 'done' : ''}"></div>`
+  ).join('');
+}
+
+function stopMetro() {
+  isRunning = false;
+  clearInterval(metroInterval);
+  metroInterval = null;
+  const playBtn = document.getElementById('playBtn');
+  playBtn.textContent = '▶ Démarrer';
+  playBtn.classList.remove('running');
+}
+
+function setBpm(val) {
+  bpm = val;
+  document.getElementById('metroBpmDisplay').textContent = val;
+  document.getElementById('metroSlider').value = val;
+  document.querySelectorAll('.preset-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.bpm) === val);
+  });
+  if (isRunning) { stopMetro(); startMetro(); }
+}
+
+// ── STATS ──
+function updateStats() {
+  document.getElementById('statDone').textContent = sessionDone;
+  document.getElementById('statXP').textContent = totalXP;
+}
+
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
+  const m = Math.floor(elapsed / 60);
+  const s = elapsed % 60;
+  document.getElementById('statTime').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function showXpPopup(text) {
+  const el = document.createElement('div');
+  el.className = 'xp-popup';
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2000);
+}
+
+// ── POPULATE REFERENCE GRIDS ──
+function populateSimples() {
+  const grid = document.getElementById('simplesGrid');
+  const items = [];
+  CONSONANTS.forEach(c => VOWELS.forEach(v => items.push(c+v)));
+  grid.innerHTML = items.map(s =>
+    `<div class="syll-item" title="Cliquer pour pratiquer">${s}</div>`
+  ).join('');
+  document.getElementById('simplesCount').textContent = items.length + ' syllabes';
+  grid.querySelectorAll('.syll-item').forEach((el, i) => {
+    el.addEventListener('click', () => {
+      const c = CONSONANTS[Math.floor(i / VOWELS.length)];
+      currentType = 'simple';
+      document.querySelector('[data-tab="exercice"]').click();
+      selectCons(c);
+      currentGroupIdx = i % VOWELS.length;
+      renderExercise();
+      el.style.background = 'rgba(232,255,71,0.12)';
+      setTimeout(() => el.style.background = '', 400);
+    });
+  });
+}
+
+function populateNasales() {
+  const grid = document.getElementById('nasalesGrid');
+  const items = [];
+  // Store consonant index for navigation
+  const itemMeta = [];
+  CONSONANTS.forEach((c, ci) => NASAL.forEach((n, ni) => {
+    items.push(c + n);
+    itemMeta.push({ cons: c, nasalIdx: ni });
+  }));
+  grid.innerHTML = items.map(s =>
+    `<div class="syll-item" style="color:var(--accent3); border-color:var(--border); cursor:pointer">${s}</div>`
+  ).join('');
+  document.getElementById('nasalesCount').textContent = items.length + ' syllabes';
+
+  grid.querySelectorAll('.syll-item').forEach((el, i) => {
+    el.addEventListener('click', () => {
+      const meta = itemMeta[i];
+      // Switch to guided tab, nasal mode
+      document.querySelector('[data-tab="exercice"]').click();
+      currentType = 'nasal';
+      selectCons(meta.cons);
+      currentGroupIdx = meta.nasalIdx;
+      renderExercise();
+      // Visual feedback
+      el.style.background = 'rgba(71,200,255,0.15)';
+      setTimeout(() => el.style.background = '', 400);
+    });
+  });
+}
+
+function populateVarietes() {
+  const grid = document.getElementById('varietesGrid');
+  const items = [];
+  const itemMeta = [];
+  VARIETIES.forEach((v, vi) => v.ends.forEach((e, ei) => {
+    items.push(v.cons + e);
+    itemMeta.push({ cons: v.cons, endIdx: ei, syllable: v.cons + e });
+  }));
+  grid.innerHTML = items.map(s =>
+    `<div class="syll-item" style="color:var(--accent2); border-color:var(--border); cursor:pointer">${s}</div>`
+  ).join('');
+  document.getElementById('varietesCount').textContent = items.length + ' syllabes';
+
+  grid.querySelectorAll('.syll-item').forEach((el, i) => {
+    el.addEventListener('click', () => {
+      const meta = itemMeta[i];
+      // Switch to guided tab, show this syllable directly in free practice
+      document.querySelector('[data-tab="exercice"]').click();
+      currentType = 'simple';
+      selectCons(meta.cons);
+
+      // Override display to show variety syllable
+      document.getElementById('currentSyll').textContent = meta.syllable;
+      document.getElementById('exTitle').innerHTML =
+        `Variété <span style="color:var(--accent2)">${meta.syllable}</span>`;
+      document.getElementById('exSub').textContent =
+        'Consonne finale · Pratiquez au métronome';
+
+      // Show 5 repetition chips for this syllable
+      const sg = document.getElementById('syllGroup');
+      sg.innerHTML = Array(5).fill(meta.syllable).map((s, idx) =>
+        `<div class="syll-chip ${idx === 0 ? 'active' : ''}">${s}</div>`
+      ).join('');
+
+      const br = document.getElementById('bounceRow');
+      br.innerHTML = Array(5).fill(0).map((_, idx) =>
+        `<div class="bounce-ball ${idx === 0 ? 'lit' : ''}" id="ball-${idx}"></div>`
+      ).join('');
+
+      // Visual feedback
+      el.style.background = 'rgba(255,107,71,0.15)';
+      setTimeout(() => el.style.background = '', 400);
+    });
+  });
+}
+
+// ── TABS ──
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    if (isRunning) stopMetro();
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ── EVENTS ──
+document.getElementById('playBtn').addEventListener('click', () => {
+  if (isRunning) stopMetro(); else startMetro();
+});
+
+document.getElementById('prevGroup').addEventListener('click', () => {
+  if (isRunning) stopMetro();
+  repeatsDone = 0;
+  currentGroupIdx = Math.max(0, currentGroupIdx - 1);
+  renderExercise();
+});
+
+document.getElementById('nextGroup').addEventListener('click', () => {
+  if (isRunning) stopMetro();
+  repeatsDone = 0;
+  const groups = getGroups();
+  currentGroupIdx = Math.min(groups.length - 1, currentGroupIdx + 1);
+  renderExercise();
+});
+
+document.getElementById('doneBtn').addEventListener('click', () => {
+  if (isRunning) stopMetro();
+  doneCons.add(currentCons);
+  totalXP += 50;
+  sessionDone++;
+  renderConsonantGrid();
+  updateStats();
+  showXpPopup('+50 XP · ' + currentCons + ' maîtrisé !');
+  playSuccess();
+  // Auto-select next
+  const idx = CONSONANTS.indexOf(currentCons);
+  if (idx < CONSONANTS.length - 1) {
+    setTimeout(() => selectCons(CONSONANTS[idx + 1]), 500);
+  }
+});
+
+document.getElementById('metroSlider').addEventListener('input', e => setBpm(parseInt(e.target.value)));
+
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => setBpm(parseInt(btn.dataset.bpm)));
+});
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space') { e.preventDefault(); document.getElementById('playBtn').click(); }
+  if (e.code === 'ArrowRight') document.getElementById('nextGroup').click();
+  if (e.code === 'ArrowLeft') document.getElementById('prevGroup').click();
+});
+
+// ── INIT ──
+renderConsonantGrid();
+renderExercise();
+populateSimples();
+populateNasales();
+populateVarietes();
+timerInterval = setInterval(updateTimer, 1000);
+</script>
+</body>
+</html>
